@@ -1,0 +1,83 @@
+const API_BASE = '/api'
+
+export const API = {
+  products: `${API_BASE}/products`,
+  categories: `${API_BASE}/categories`,
+  contact: `${API_BASE}/contact`,
+  brand: `${API_BASE}/brand`,
+  upload: `${API_BASE}/upload`,
+}
+
+export const BRAND = {
+  name: 'SOFT',
+  nameAr: 'سوفت',
+  description:
+    'متجر سوفت للألبسة الداخلية، اللانجري، الحجابات، أطقم الصلاة، البشاكير، وتجهيز العرائس بأرقى الخامات وأفضل الأسعار.',
+  phone: '0962226361',
+  phoneDisplay: '0962 226 361',
+  whatsapp: '963962226361',
+  instagram: 'https://instagram.com/soft.boutique',
+  facebook: 'https://facebook.com/soft.boutique',
+  address: 'سوريا — متجر سوفت الفاخر',
+  hours: 'السبت – الخميس | 10:00 صباحاً – 10:00 مساءً',
+}
+
+export const PLACEHOLDER_IMAGES = {
+  hero: 'https://images.unsplash.com/photo-1750064144361-bc7d12be7a98?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400',
+  product:
+    'https://images.unsplash.com/photo-1770294758971-44fa1eae61a3?auto=format&fit=crop&q=85&w=600',
+}
+
+export const SAMPLE_PRODUCTS = [
+  {
+    id: 1,
+    name: 'طقم لانجري حرير فاخر',
+    category: 'لانجري',
+    price: 'حسب القياس',
+    image:
+      'https://images.unsplash.com/photo-1770294758971-44fa1eae61a3?auto=format&fit=crop&q=85&w=600',
+    badge: 'أكثر مبيعاً',
+  },
+  {
+    id: 2,
+    name: 'حجاب شيفون كويتي أنيق',
+    category: 'حجابات',
+    price: 'متوفر بألوان متعددة',
+    image:
+      'https://images.unsplash.com/photo-1550546094-9835463f9f71?auto=format&fit=crop&q=85&w=600',
+    badge: 'جديد',
+  },
+  {
+    id: 3,
+    name: 'روب عروس مطرز بالدانتيل',
+    category: 'تجهيز عرائس',
+    price: 'تشكيلة خاصة',
+    image:
+      'https://images.unsplash.com/photo-1521467752200-3bccf80f16ed?auto=format&fit=crop&q=85&w=600',
+    badge: 'طقم العروس',
+  },
+  {
+    id: 4,
+    name: 'منشفة وبشكير قطن مصري 100%',
+    category: 'بشاكير ومناشف',
+    price: 'نعومة فائقة',
+    image:
+      'https://images.unsplash.com/photo-1638232928539-6e91c47ddec5?auto=format&fit=crop&q=85&w=600',
+  },
+  {
+    id: 5,
+    name: 'أطقم صلاة مريحة ومطرزة',
+    category: 'أطقم صلاة',
+    price: 'قماش بارد',
+    image:
+      'https://images.unsplash.com/photo-1550546094-9835463f9f71?auto=format&fit=crop&q=85&w=600',
+  },
+  {
+    id: 6,
+    name: 'جوارب قطنية مريحة ناعمة',
+    category: 'جوارب',
+    price: 'أعلى جودة',
+    image:
+      'https://images.unsplash.com/photo-1615486364462-ef6363adbc18?auto=format&fit=crop&q=85&w=600',
+  },
+]
