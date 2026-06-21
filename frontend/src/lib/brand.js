@@ -1,4 +1,5 @@
-const API_BASE = '/api'
+const API_ORIGIN = import.meta.env.VITE_API_URL || ''
+const API_BASE = `${API_ORIGIN}/api`
 
 export const API = {
   products: `${API_BASE}/products`,
@@ -6,6 +7,11 @@ export const API = {
   contact: `${API_BASE}/contact`,
   brand: `${API_BASE}/brand`,
   upload: `${API_BASE}/upload`,
+}
+
+export const assetUrl = (url) => {
+  if (!url || /^(https?:|data:|blob:)/.test(url)) return url
+  return `${API_ORIGIN}${url}`
 }
 
 export const BRAND = {
@@ -18,7 +24,9 @@ export const BRAND = {
   whatsapp: '963962226361',
   instagram: 'https://instagram.com/soft.boutique',
   facebook: 'https://facebook.com/soft.boutique',
-  address: 'سوريا — متجر سوفت الفاخر',
+  address: 'ميسلون، درعا، سوريا',
+  mapQuery: '32.628474,36.103253',
+  mapLabel: 'SOFT - سوفت',
   hours: 'السبت – الخميس | 10:00 صباحاً – 10:00 مساءً',
 }
 

@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, MessageCircle, X } from 'lucide-react'
-import { BRAND, API, SAMPLE_PRODUCTS } from '../lib/brand'
+import { Eye, MessageCircle, X, PackageOpen } from 'lucide-react'
+import { BRAND, API, SAMPLE_PRODUCTS, assetUrl } from '../lib/brand'
 import axios from 'axios'
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+}
+
+const cardVariants = {
+  hidden: { y: 40, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: 'easeOut' },
+  },
+}
 
 export default function Products() {
   const [activeTab, setActiveTab] = useState('الكل')
@@ -58,7 +75,13 @@ export default function Products() {
   return (
     <section id="products" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl mx-auto mb-12"
+        >
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-burgundy mb-4">
             تشكيلة منتجاتنا الفاخرة
           </h2>
@@ -66,12 +89,20 @@ export default function Products() {
             تصفحي المنتجات حسب الأقسام واضغطي على أي قطعة لمشاهدة التفاصيل
             الكاملة والطلب مباشرة.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-12 no-scrollbar justify-start sm:justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="flex gap-2 overflow-x-auto pb-4 mb-12 no-scrollbar justify-start sm:justify-center"
+        >
           {categories.map((cat) => (
-            <button
+            <motion.button
               key={cat}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
               onClick={() => setActiveTab(cat)}
               className={`whitespace-nowrap px-6 py-2.5 rounded-full text-xs font-medium transition ${
                 activeTab === cat
@@ -80,44 +111,89 @@ export default function Products() {
               }`}
             >
               {cat}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
         {loading ? (
           <div className="text-center py-20 text-neutral-400">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+              className="w-8 h-8 border-2 border-brand-burgundy border-t-transparent rounded-full mx-auto mb-4"
+            />
             جاري تحميل المنتجات...
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20"
+          >
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <PackageOpen className="w-16 h-16 mx-auto text-brand-pink-deep/40 mb-4" />
+            </motion.div>
+            <p className="text-lg font-medium text-neutral-500">
+              لا توجد منتجات في هذا القسم
+            </p>
+            <p className="text-sm text-neutral-400 mt-1">
+              قريباً سنضيف تشكيلة جديدة لهذا القسم
+            </p>
+          </motion.div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((prod) => (
                 <motion.div
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
+                  variants={cardVariants}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
                   key={prod._id || prod.id}
                   onClick={() => setSelectedProduct(prod)}
+                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   className="group cursor-pointer text-start"
                 >
                   <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-brand-pink-soft mb-4">
-                    <img
-                      src={prod.image}
+                    <motion.img
+                      src={assetUrl(prod.image)}
                       alt={prod.name}
-                      className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition duration-700"
+                      whileHover={{ scale: 1.1 }}
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-brand-burgundy/10 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                      <span className="bg-white/95 text-brand-burgundy text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-2 shadow">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0 bg-brand-burgundy/10 flex items-center justify-center"
+                    >
+                      <motion.span
+                        initial={{ y: 10, opacity: 0 }}
+                        whileHover={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                        className="bg-white/95 text-brand-burgundy text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-2 shadow"
+                      >
                         <Eye className="w-4 h-4" /> تفاصيل القطعة
-                      </span>
-                    </div>
+                      </motion.span>
+                    </motion.div>
                     {prod.badge && (
-                      <span className="absolute top-3 right-3 bg-brand-burgundy text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                        className="absolute top-3 right-3 bg-brand-burgundy text-white text-[10px] font-bold px-3 py-1 rounded-full"
+                      >
                         {prod.badge}
-                      </span>
+                      </motion.span>
                     )}
                   </div>
                   <span className="text-[10px] tracking-wider text-brand-burgundy font-medium uppercase">
@@ -146,9 +222,10 @@ export default function Products() {
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm"
               />
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 50, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 className="bg-white rounded-3xl overflow-hidden max-w-2xl w-full relative z-10 grid md:grid-cols-2 shadow-2xl"
               >
                 <button
@@ -157,14 +234,24 @@ export default function Products() {
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <div className="aspect-[4/5] bg-neutral-100">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="aspect-[4/5] bg-neutral-100"
+                >
                   <img
-                    src={selectedProduct.image}
+                    src={assetUrl(selectedProduct.image)}
                     alt=""
                     className="w-full h-full object-cover"
                   />
-                </div>
-                <div className="p-8 flex flex-col justify-between">
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="p-8 flex flex-col justify-between"
+                >
                   <div>
                     <span className="text-xs text-brand-burgundy/70 font-medium">
                       {selectedProduct.category}
@@ -176,11 +263,17 @@ export default function Products() {
                       القطعة مصنوعة من خامات عالية الجودة تضمن الراحة والأناقة
                       المستدامة ومتوفرة بمقاسات مختلفة لتناسب رغبتك.
                     </p>
-                    <div className="text-xl font-bold text-brand-burgundy mt-4">
+                    <motion.div
+                      animate={{ scale: [1, 1.03, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      className="text-xl font-bold text-brand-burgundy mt-4"
+                    >
                       {selectedProduct.price}
-                    </div>
+                    </motion.div>
                   </div>
-                  <a
+                  <motion.a
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(
                       `مرحباً سوفت، أود الاستفسار عن قطعة: ${selectedProduct.name}`
                     )}`}
@@ -189,8 +282,8 @@ export default function Products() {
                     className="w-full bg-brand-burgundy text-white py-3.5 rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-brand-burgundy-dark transition mt-6"
                   >
                     <MessageCircle className="w-5 h-5" /> اطلب الآن عبر واتساب
-                  </a>
-                </div>
+                  </motion.a>
+                </motion.div>
               </motion.div>
             </div>
           )}

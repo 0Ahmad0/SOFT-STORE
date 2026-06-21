@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const rateLimit = require('express-rate-limit')
+const multer = require('multer')
 const connectDB = require('./config/db')
 const Admin = require('./models/Admin')
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
+  skip: (req) => req.headers.authorization?.startsWith('Bearer '),
   message: { message: 'طلبات كثيرة جداً، الرجاء المحاولة لاحقاً' },
 })
 app.use('/api/', limiter)

@@ -6,8 +6,13 @@ exports.getAll = async (req, res) => {
     const filter = {}
     if (category) filter.category = category
     if (featured) filter.featured = featured === 'true'
-    if (active !== undefined) filter.active = active === 'true'
-    else filter.active = true
+    if (active === 'all') {
+      // show all (admin)
+    } else if (active !== undefined) {
+      filter.active = active === 'true'
+    } else {
+      filter.active = true
+    }
 
     const products = await Product.find(filter).sort({ order: 1, createdAt: -1 })
     res.json(products)

@@ -3,8 +3,14 @@ const Category = require('../models/Category')
 exports.getAll = async (req, res) => {
   try {
     const { active } = req.query
-    const filter = { active: true }
-    if (active !== undefined) filter.active = active === 'true'
+    const filter = {}
+    if (active === 'all') {
+      // show all (admin)
+    } else if (active !== undefined) {
+      filter.active = active === 'true'
+    } else {
+      filter.active = true
+    }
     const categories = await Category.find(filter).sort({ order: 1 })
     res.json(categories)
   } catch (error) {
