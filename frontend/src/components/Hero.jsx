@@ -106,6 +106,13 @@ export default function Hero() {
 
             <motion.p
               variants={itemVariants}
+              className="text-2xl sm:text-3xl font-bold text-brand-burgundy mb-5"
+            >
+              بإدارة السيد أسامة النقاوة
+            </motion.p>
+
+            <motion.p
+              variants={itemVariants}
               className="text-base sm:text-lg text-neutral-600 leading-relaxed mb-10 max-w-xl"
             >
               {BRAND.description} نفتخر بتقديم تجربة استثنائية لكل زبائننا مع
