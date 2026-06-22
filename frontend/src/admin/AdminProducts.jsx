@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { assetUrl } from '../lib/brand'
+import { uploadImage } from '../lib/cloudinaryUpload'
 import AdminNotice from './AdminNotice'
 import {
   Package,
@@ -25,6 +26,7 @@ export default function AdminProducts() {
   const [search, setSearch] = useState('')
   const [notice, setNotice] = useState(null)
   const [draggingId, setDraggingId] = useState(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const fileRef = useRef()
 
   const [form, setForm] = useState({
@@ -102,21 +104,24 @@ export default function AdminProducts() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    const fd = new FormData()
-    fd.append('image', file)
+    setUploadingImage(true)
     try {
-      const res = await axios.post('/api/upload', fd, {
-        headers: { ...headers(), 'Content-Type': 'multipart/form-data' },
-      })
-      setForm((prev) => ({ ...prev, image: res.data.url }))
+      const url = await uploadImage(file, 'products')
+      setForm((prev) => ({ ...prev, image: url }))
       setNotice({ type: 'success', message: 'تم رفع الصورة بنجاح.' })
     } catch (err) {
-      setNotice({ type: 'error', message: err.response?.data?.message || 'تعذر رفع الصورة. تأكد من نوع وحجم الملف.' })
+      setNotice({ type: 'error', message: err.message || 'تعذر رفع الصورة. تأكد من نوع وحجم الملف.' })
+    } finally {
+      setUploadingImage(false)
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (uploadingImage) {
+      setNotice({ type: 'error', message: 'انتظر حتى يكتمل رفع الصورة.' })
+      return
+    }
     try {
       if (editing) {
         await axios.put(`/api/products/${editing}`, form, { headers: headers() })
@@ -289,9 +294,10 @@ export default function AdminProducts() {
                   <button
                     type="button"
                     onClick={() => fileRef.current.click()}
+                    disabled={uploadingImage}
                     className="px-4 py-2.5 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-500 hover:border-brand-burgundy hover:text-brand-burgundy transition flex items-center gap-2"
                   >
-                    <ImageIcon className="w-4 h-4" /> رفع صورة
+                    <ImageIcon className="w-4 h-4" /> {uploadingImage ? 'جاري الرفع...' : 'رفع صورة'}
                   </button>
                   <input
                     ref={fileRef}
@@ -351,9 +357,10 @@ export default function AdminProducts() {
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
+                disabled={uploadingImage}
                 className="flex-1 bg-brand-burgundy text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-burgundy/90 transition"
               >
-                {editing ? 'حفظ التعديلات' : 'إضافة المنتج'}
+                {uploadingImage ? 'جاري الرفع...' : editing ? 'حفظ التعديلات' : 'إضافة المنتج'}
               </button>
               <button
                 type="button"

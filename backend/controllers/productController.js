@@ -1,4 +1,5 @@
 const Product = require('../models/Product')
+const { deleteImage } = require('../lib/cloudinary')
 
 exports.getAll = async (req, res) => {
   try {
@@ -48,12 +49,16 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
+    const oldProduct = req.body.image ? await Product.findById(req.params.id) : null
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     })
     if (!product) {
       return res.status(404).json({ message: 'المنتج غير موجود' })
+    }
+    if (oldProduct?.image && oldProduct.image !== product.image) {
+      await deleteImage(oldProduct.image)
     }
     res.json(product)
   } catch (error) {
@@ -71,6 +76,7 @@ exports.remove = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: 'المنتج غير موجود' })
     }
+    await deleteImage(product.image)
     res.json({ message: 'تم حذف المنتج بنجاح' })
   } catch (error) {
     res.status(500).json({ message: 'خطأ في حذف المنتج', error: error.message })

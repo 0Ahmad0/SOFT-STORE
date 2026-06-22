@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Settings, Save, Image as ImageIcon } from 'lucide-react'
 import { BRAND, assetUrl } from '../lib/brand'
+import { uploadImage } from '../lib/cloudinaryUpload'
 import AdminNotice from './AdminNotice'
 
 const token = () => localStorage.getItem('adminToken')
@@ -69,16 +70,12 @@ export default function AdminBrand() {
   const handleImageUpload = async (e, field) => {
     const file = e.target.files[0]
     if (!file) return
-    const fd = new FormData()
-    fd.append('image', file)
     try {
-      const res = await axios.post('/api/upload', fd, {
-        headers: { ...headers(), 'Content-Type': 'multipart/form-data' },
-      })
-      setForm((prev) => ({ ...prev, [field]: res.data.url }))
+      const url = await uploadImage(file, 'settings')
+      setForm((prev) => ({ ...prev, [field]: url }))
       setNotice({ type: 'success', message: 'تم رفع الصورة بنجاح.' })
     } catch (err) {
-      setNotice({ type: 'error', message: err.response?.data?.message || 'تعذر رفع الصورة. تأكد من نوع وحجم الملف.' })
+      setNotice({ type: 'error', message: err.message || 'تعذر رفع الصورة. تأكد من نوع وحجم الملف.' })
     }
   }
 
