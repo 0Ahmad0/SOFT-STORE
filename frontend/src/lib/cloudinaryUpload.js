@@ -14,6 +14,7 @@ export async function uploadImage(file, folder = 'settings') {
   const compressed = await imageCompression(file, {
     maxSizeMB: 0.25,
     maxWidthOrHeight: 1600,
+    initialQuality: 0.82,
     useWebWorker: true,
   })
 

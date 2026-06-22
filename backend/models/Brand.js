@@ -17,6 +17,9 @@ const brandSchema = new mongoose.Schema(
     logo: { type: String, default: '' },
     heroImage: { type: String, default: '' },
     storefront: { type: String, default: '' },
+    managerName: { type: String, default: 'السيد أسامة النقاوة' },
+    managerTitle: { type: String, default: 'بإدارة' },
+    managerImage: { type: String, default: '' },
     heroTitle: { type: String, default: '' },
     stats: [
       {

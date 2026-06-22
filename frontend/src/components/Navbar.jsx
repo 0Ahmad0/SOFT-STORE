@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone } from 'lucide-react'
-import { BRAND as FALLBACK_BRAND } from '../lib/brand'
+import { API, BRAND as FALLBACK_BRAND, cleanPhone, imageUrl } from '../lib/brand'
 import axios from 'axios'
 
 const links = [
@@ -26,7 +26,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchBrand = async () => {
       try {
-        const res = await axios.get('/api/brand')
+        const res = await axios.get(API.brand)
         if (res.data) {
           setBrand({
             name: res.data.name || 'SOFT',
@@ -43,6 +43,9 @@ export default function Navbar() {
     }
     fetchBrand()
   }, [])
+
+  const phone = cleanPhone(brand.phone)
+  const whatsapp = cleanPhone(brand.whatsapp || phone)
 
   const goTo = (id) => {
     setOpen(false)
@@ -67,7 +70,7 @@ export default function Navbar() {
         >
           <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-brand-burgundy/20">
             <img
-              src={brand.logo || 'https://via.placeholder.com/44/5E1224/ffffff?text=S'}
+              src={imageUrl(brand.logo, 120) || 'https://via.placeholder.com/44/5E1224/ffffff?text=S'}
               alt={brand.name}
               className="w-full h-full object-cover"
             />
@@ -97,14 +100,14 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <a
-            href={`tel:${brand.phone}`}
+            href={`tel:${phone}`}
             className="hidden md:inline-flex items-center gap-2 text-sm text-brand-burgundy font-medium"
             dir="ltr"
           >
             <Phone className="w-4 h-4" /> {brand.phoneDisplay}
           </a>
           <a
-            href={`https://wa.me/${brand.whatsapp}`}
+            href={`https://wa.me/${whatsapp}`}
             target="_blank"
             rel="noreferrer"
             className="bg-brand-burgundy text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-brand-burgundy-dark transition"

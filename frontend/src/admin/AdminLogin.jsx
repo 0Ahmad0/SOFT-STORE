@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Lock, Mail, AlertCircle } from 'lucide-react'
+import { API } from '../lib/brand'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -15,7 +16,7 @@ export default function AdminLogin() {
     setError('')
     setLoading(true)
     try {
-      const res = await axios.post('/api/auth/login', { email, password })
+      const res = await axios.post(`${API.auth}/login`, { email, password })
       localStorage.setItem('adminToken', res.data.token)
       localStorage.setItem('adminName', res.data.admin.name)
       navigate('/admin')

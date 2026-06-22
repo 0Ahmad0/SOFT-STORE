@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, MessageCircle, X, PackageOpen } from 'lucide-react'
-import { BRAND, API, SAMPLE_PRODUCTS, assetUrl } from '../lib/brand'
+import { BRAND, API, SAMPLE_PRODUCTS, cleanPhone, imageUrl } from '../lib/brand'
 import axios from 'axios'
 
 const containerVariants = {
@@ -24,6 +24,7 @@ const cardVariants = {
 export default function Products() {
   const [activeTab, setActiveTab] = useState('الكل')
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const [brand, setBrand] = useState(BRAND)
   const [products, setProducts] = useState(SAMPLE_PRODUCTS || [])
   const [categories, setCategories] = useState([
     'الكل',
@@ -40,6 +41,7 @@ export default function Products() {
   useEffect(() => {
     fetchProducts()
     fetchCategories()
+    axios.get(API.brand).then((res) => setBrand({ ...BRAND, ...res.data })).catch(() => {})
   }, [])
 
   const fetchProducts = async () => {
@@ -164,11 +166,12 @@ export default function Products() {
                 >
                   <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-brand-pink-soft mb-4">
                     <motion.img
-                      src={assetUrl(prod.image)}
+                      src={imageUrl(prod.image, 700)}
                       alt={prod.name}
                       className="w-full h-full object-cover transition duration-700"
                       whileHover={{ scale: 1.1 }}
                       loading="lazy"
+                      decoding="async"
                     />
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -241,9 +244,11 @@ export default function Products() {
                   className="aspect-[4/5] bg-neutral-100"
                 >
                   <img
-                    src={assetUrl(selectedProduct.image)}
+                    src={imageUrl(selectedProduct.image, 900)}
                     alt=""
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </motion.div>
                 <motion.div
@@ -274,7 +279,7 @@ export default function Products() {
                   <motion.a
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(
+                    href={`https://wa.me/${cleanPhone(brand.whatsapp || brand.phone)}?text=${encodeURIComponent(
                       `مرحباً سوفت، أود الاستفسار عن قطعة: ${selectedProduct.name}`
                     )}`}
                     target="_blank"

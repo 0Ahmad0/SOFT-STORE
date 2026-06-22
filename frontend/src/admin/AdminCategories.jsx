@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Tags, Plus, Pencil, Trash2, X, GripVertical } from 'lucide-react'
+import { API } from '../lib/brand'
 import AdminNotice from './AdminNotice'
 
 const token = () => localStorage.getItem('adminToken')
@@ -19,7 +20,7 @@ export default function AdminCategories() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get('/api/categories?active=all')
+      const res = await axios.get(`${API.categories}?active=all`)
       setCategories(sortCategories(res.data || []))
     } catch {
       setCategories([])
@@ -51,10 +52,10 @@ export default function AdminCategories() {
         : 1
       const body = editing ? { name } : { name, order: nextOrder }
       if (editing) {
-        await axios.put(`/api/categories/${editing}`, body, { headers: headers() })
+        await axios.put(`${API.categories}/${editing}`, body, { headers: headers() })
         setNotice({ type: 'success', message: 'تم تحديث التصنيف بنجاح.' })
       } else {
-        await axios.post('/api/categories', body, { headers: headers() })
+        await axios.post(API.categories, body, { headers: headers() })
         setNotice({ type: 'success', message: 'تم إضافة التصنيف وسيظهر في لوحة التحكم والموقع.' })
       }
       resetForm()
@@ -92,7 +93,7 @@ export default function AdminCategories() {
     try {
       await Promise.all(
         nextCategories.map((cat) =>
-          axios.put(`/api/categories/${cat._id}`, { order: cat.order }, { headers: headers() })
+          axios.put(`${API.categories}/${cat._id}`, { order: cat.order }, { headers: headers() })
         )
       )
       setNotice({ type: 'success', message: 'تم حفظ ترتيب التصنيفات.' })
@@ -105,7 +106,7 @@ export default function AdminCategories() {
   const handleDelete = async (id) => {
     if (!confirm('متأكد من حذف هذا التصنيف؟')) return
     try {
-      await axios.delete(`/api/categories/${id}`, { headers: headers() })
+      await axios.delete(`${API.categories}/${id}`, { headers: headers() })
       setNotice({ type: 'success', message: 'تم حذف التصنيف بنجاح.' })
       fetchCategories()
     } catch (err) {

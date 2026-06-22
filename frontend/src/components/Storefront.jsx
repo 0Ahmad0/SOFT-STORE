@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Phone, Clock } from 'lucide-react'
-import { BRAND, API, assetUrl } from '../lib/brand'
+import { BRAND, API, imageUrl } from '../lib/brand'
 import axios from 'axios'
 
 const listVariants = {
@@ -72,11 +72,13 @@ export default function Storefront() {
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.6 }}
                 src={
-                  assetUrl(brand.storefront) ||
+                  imageUrl(brand.storefront, 1000) ||
                   'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=85&w=800'
                 }
                 alt="معرض سوفت للألبسة الداخلية"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </motion.div>

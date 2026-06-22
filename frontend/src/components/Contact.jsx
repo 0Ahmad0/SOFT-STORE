@@ -1,19 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { MessageCircle, Instagram, Facebook, Send } from 'lucide-react'
-import { BRAND, API } from '../lib/brand'
+import { BRAND, API, cleanPhone, socialUrl } from '../lib/brand'
 import axios from 'axios'
 
-const socialLinks = [
-  { Icon: MessageCircle, href: `https://wa.me/${BRAND.whatsapp}`, color: '#25D366' },
-  { Icon: Instagram, href: BRAND.instagram, color: '#E1306C' },
-  { Icon: Facebook, href: BRAND.facebook, color: '#1877F2' },
-]
-
 export default function Contact() {
+  const [brand, setBrand] = useState(BRAND)
   const [form, setForm] = useState({ name: '', phone: '', msg: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  useEffect(() => {
+    axios.get(API.brand).then((res) => setBrand({ ...BRAND, ...res.data })).catch(() => {})
+  }, [])
+
+  const socialLinks = [
+    { Icon: MessageCircle, href: `https://wa.me/${cleanPhone(brand.whatsapp || brand.phone)}`, color: '#25D366' },
+    { Icon: Instagram, href: socialUrl(brand.instagram, BRAND.instagram, 'instagram.com'), color: '#E1306C' },
+    { Icon: Facebook, href: socialUrl(brand.facebook, BRAND.facebook, 'facebook.com'), color: '#1877F2' },
+  ]
 
   const handleSubmit = async (e) => {
     e.preventDefault()

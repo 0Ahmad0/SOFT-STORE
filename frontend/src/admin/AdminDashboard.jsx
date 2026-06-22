@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Package, Tags, MessageSquare, TrendingUp, ArrowLeft } from 'lucide-react'
+import { API } from '../lib/brand'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, categories: 0, messages: 0 })
@@ -12,9 +13,9 @@ export default function AdminDashboard() {
       const headers = { Authorization: `Bearer ${token}` }
       try {
         const [prodRes, catRes, msgRes] = await Promise.all([
-          axios.get('/api/products?active=all', { headers }),
-          axios.get('/api/categories?active=all', { headers }),
-          axios.get('/api/contact', { headers }),
+          axios.get(`${API.products}?active=all`, { headers }),
+          axios.get(`${API.categories}?active=all`, { headers }),
+          axios.get(API.contact, { headers }),
         ])
         setStats({
           products: prodRes.data.length,

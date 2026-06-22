@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { MessageSquare, Trash2, Phone, Clock } from 'lucide-react'
+import { API } from '../lib/brand'
 import AdminNotice from './AdminNotice'
 
 const token = () => localStorage.getItem('adminToken')
@@ -15,7 +16,7 @@ export default function AdminMessages() {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get('/api/contact', { headers: headers() })
+      const res = await axios.get(API.contact, { headers: headers() })
       setMessages(res.data)
     } catch {
       setMessages([])
@@ -27,7 +28,7 @@ export default function AdminMessages() {
   const handleDelete = async (id) => {
     if (!confirm('حذف الرسالة؟')) return
     try {
-      await axios.delete(`/api/contact/${id}`, { headers: headers() })
+      await axios.delete(`${API.contact}/${id}`, { headers: headers() })
       setNotice({ type: 'success', message: 'تم حذف الرسالة بنجاح.' })
       fetchMessages()
     } catch (err) {

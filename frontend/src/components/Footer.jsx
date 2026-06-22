@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { MessageCircle } from 'lucide-react'
-import { BRAND } from '../lib/brand'
+import axios from 'axios'
+import { API, BRAND, cleanPhone } from '../lib/brand'
 
 export default function Footer() {
+  const [brand, setBrand] = useState(BRAND)
+
+  useEffect(() => {
+    axios.get(API.brand).then((res) => setBrand({ ...BRAND, ...res.data })).catch(() => {})
+  }, [])
+
   return (
     <motion.footer
       initial={{ opacity: 0 }}
@@ -29,7 +36,7 @@ export default function Footer() {
           transition={{ delay: 0.3 }}
           className="text-xs max-w-md mx-auto leading-relaxed"
         >
-          {BRAND.description}
+          {brand.description || BRAND.description}
         </motion.p>
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -44,7 +51,7 @@ export default function Footer() {
       </div>
 
       <motion.a
-        href={`https://wa.me/${BRAND.whatsapp}`}
+        href={`https://wa.me/${cleanPhone(brand.whatsapp || brand.phone)}`}
         target="_blank"
         rel="noreferrer"
         animate={{ y: [0, -8, 0], scale: [1, 1.05, 1] }}

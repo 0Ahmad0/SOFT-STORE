@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Settings, Save, Image as ImageIcon } from 'lucide-react'
-import { BRAND, assetUrl } from '../lib/brand'
+import { API, BRAND, imageUrl } from '../lib/brand'
 import { uploadImage } from '../lib/cloudinaryUpload'
 import AdminNotice from './AdminNotice'
 
@@ -25,6 +25,9 @@ export default function AdminBrand() {
     logo: '',
     heroImage: '',
     storefront: '',
+    managerName: BRAND.managerName,
+    managerTitle: BRAND.managerTitle,
+    managerImage: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -32,11 +35,12 @@ export default function AdminBrand() {
   const logoRef = useRef()
   const heroRef = useRef()
   const storefrontRef = useRef()
+  const managerRef = useRef()
 
   useEffect(() => {
     const fetchBrand = async () => {
       try {
-        const res = await axios.get('/api/brand')
+        const res = await axios.get(API.brand)
         if (res.data) {
           setForm({
             name: res.data.name || '',
@@ -54,6 +58,9 @@ export default function AdminBrand() {
             logo: res.data.logo || '',
             heroImage: res.data.heroImage || '',
             storefront: res.data.storefront || '',
+            managerName: res.data.managerName || BRAND.managerName,
+            managerTitle: res.data.managerTitle || BRAND.managerTitle,
+            managerImage: res.data.managerImage || '',
           })
         }
       } catch {
@@ -83,7 +90,7 @@ export default function AdminBrand() {
     e.preventDefault()
     setSaving(true)
     try {
-      await axios.put('/api/brand', form, { headers: headers() })
+      await axios.put(API.brand, form, { headers: headers() })
       setNotice({ type: 'success', message: 'تم حفظ معلومات المتجر بنجاح.' })
     } catch (err) {
       setNotice({ type: 'error', message: err.response?.data?.message || 'تعذر حفظ معلومات المتجر.' })
@@ -184,7 +191,7 @@ export default function AdminBrand() {
               />
               {form.logo && (
                 <div className="relative">
-                  <img src={assetUrl(form.logo)} alt="logo" className="w-16 h-16 rounded-xl object-cover" />
+                  <img src={imageUrl(form.logo, 120)} alt="logo" className="w-16 h-16 rounded-xl object-cover" />
                   <button
                     type="button"
                     onClick={() => setForm((p) => ({ ...p, logo: '' }))}
@@ -224,7 +231,7 @@ export default function AdminBrand() {
               />
               {form.heroImage && (
                 <div className="relative">
-                  <img src={assetUrl(form.heroImage)} alt="hero" className="w-16 h-16 rounded-xl object-cover" />
+                  <img src={imageUrl(form.heroImage, 160)} alt="hero" className="w-16 h-16 rounded-xl object-cover" />
                   <button
                     type="button"
                     onClick={() => setForm((p) => ({ ...p, heroImage: '' }))}
@@ -264,7 +271,7 @@ export default function AdminBrand() {
               />
               {form.storefront && (
                 <div className="relative">
-                  <img src={assetUrl(form.storefront)} alt="storefront" className="w-16 h-16 rounded-xl object-cover" />
+                  <img src={imageUrl(form.storefront, 160)} alt="storefront" className="w-16 h-16 rounded-xl object-cover" />
                   <button
                     type="button"
                     onClick={() => setForm((p) => ({ ...p, storefront: '' }))}
@@ -284,6 +291,66 @@ export default function AdminBrand() {
                 placeholder="أو أدخل رابط الصورة يدوياً"
               />
             )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-1">صورة المدير</label>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => managerRef.current.click()}
+                className="px-4 py-2.5 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-500 hover:border-brand-burgundy hover:text-brand-burgundy transition flex items-center gap-2"
+              >
+                <ImageIcon className="w-4 h-4" /> رفع صورة المدير
+              </button>
+              <input
+                ref={managerRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'managerImage')}
+                className="hidden"
+              />
+              {form.managerImage && (
+                <div className="relative">
+                  <img src={imageUrl(form.managerImage, 160)} alt="manager" className="w-16 h-16 rounded-xl object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setForm((p) => ({ ...p, managerImage: '' }))}
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+            </div>
+            {form.managerImage && (
+              <input
+                type="text"
+                value={form.managerImage}
+                onChange={(e) => setForm((p) => ({ ...p, managerImage: e.target.value }))}
+                className="w-full mt-2 px-4 py-2 border border-neutral-200 rounded-xl text-xs text-neutral-500"
+                placeholder="أو أدخل رابط صورة المدير يدوياً"
+              />
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">عبارة المدير</label>
+              <input
+                type="text"
+                value={form.managerTitle}
+                onChange={handleChange('managerTitle')}
+                className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-burgundy/20"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">اسم المدير</label>
+              <input
+                type="text"
+                value={form.managerName}
+                onChange={handleChange('managerName')}
+                className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-burgundy/20"
+              />
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">العنوان</label>

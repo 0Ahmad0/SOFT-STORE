@@ -1,4 +1,4 @@
-const API_ORIGIN = import.meta.env.VITE_API_URL || ''
+const API_ORIGIN = import.meta.env.VITE_API_URL || 'https://soft-store.onrender.com'
 const API_BASE = `${API_ORIGIN}/api`
 
 export const API = {
@@ -7,11 +7,27 @@ export const API = {
   contact: `${API_BASE}/contact`,
   brand: `${API_BASE}/brand`,
   upload: `${API_BASE}/upload`,
+  auth: `${API_BASE}/auth`,
 }
 
 export const assetUrl = (url) => {
   if (!url || /^(https?:|data:|blob:)/.test(url)) return url
   return `${API_ORIGIN}${url}`
+}
+
+export const imageUrl = (url, width = 900) => {
+  const src = assetUrl(url)
+  if (!src?.includes('res.cloudinary.com') || src.includes('/f_auto,')) return src
+  return src.replace('/upload/', `/upload/f_auto,q_auto,c_limit,w_${width}/`)
+}
+
+export const cleanPhone = (value) => String(value || '').replace(/\D/g, '')
+export const socialUrl = (value, fallback, host = '') => {
+  if (!value) return fallback
+  if (/^https?:\/\//i.test(value)) return value
+  const clean = value.replace(/^@/, '')
+  if (clean.includes('.')) return `https://${clean}`
+  return host ? `https://${host}/${clean}` : `https://${clean}`
 }
 
 export const BRAND = {
@@ -24,6 +40,9 @@ export const BRAND = {
   whatsapp: '963962226361',
   instagram: 'https://instagram.com/soft.boutique',
   facebook: 'https://facebook.com/soft.boutique',
+  managerName: 'السيد أسامة النقاوة',
+  managerTitle: 'بإدارة',
+  managerImage: '',
   address: 'ميسلون، درعا، سوريا',
   mapQuery: '32.628474,36.103253',
   mapLabel: 'SOFT - سوفت',

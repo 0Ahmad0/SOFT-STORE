@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import axios from 'axios'
-import { API, BRAND, PLACEHOLDER_IMAGES, assetUrl } from '../lib/brand'
+import { API, BRAND, PLACEHOLDER_IMAGES, imageUrl } from '../lib/brand'
 
 const containerVariants = {
   hidden: {},
@@ -30,6 +30,7 @@ const statVariants = {
 }
 
 export default function Hero() {
+  const [brand, setBrand] = useState(BRAND)
   const [heroImage, setHeroImage] = useState('')
   const [stats, setStats] = useState([
     { value: '0', label: 'منتج متوفر' },
@@ -45,6 +46,7 @@ export default function Hero() {
           axios.get(API.products),
           axios.get(API.categories),
         ])
+        setBrand({ ...BRAND, ...brandRes.data })
         setHeroImage(brandRes.data?.heroImage || '')
         setStats([
           { value: String(productsRes.data?.length || 0), label: 'منتج متوفر' },
@@ -106,16 +108,38 @@ export default function Hero() {
 
             <motion.p
               variants={itemVariants}
-              className="text-2xl sm:text-3xl font-bold text-brand-burgundy mb-5"
+              className="mb-6 inline-flex items-center gap-4 border-y border-brand-pink py-4"
             >
-              بإدارة السيد أسامة النقاوة
+              <span className="w-16 h-16 rounded-full overflow-hidden bg-brand-pink-soft border-2 border-white shadow-lg shrink-0">
+                {brand.managerImage ? (
+                  <img
+                    src={imageUrl(brand.managerImage, 220)}
+                    alt={brand.managerName}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span className="w-full h-full flex items-center justify-center font-serif text-2xl font-bold text-brand-burgundy">
+                    أ
+                  </span>
+                )}
+              </span>
+              <span>
+                <span className="block text-xs sm:text-sm text-neutral-500 font-medium mb-1">
+                  {brand.managerTitle || 'بإدارة'}
+                </span>
+                <span className="block font-serif text-2xl sm:text-4xl font-bold italic text-brand-burgundy leading-tight">
+                  {brand.managerName || 'السيد أسامة النقاوة'}
+                </span>
+              </span>
             </motion.p>
 
             <motion.p
               variants={itemVariants}
               className="text-base sm:text-lg text-neutral-600 leading-relaxed mb-10 max-w-xl"
             >
-              {BRAND.description} نفتخر بتقديم تجربة استثنائية لكل زبائننا مع
+              {(brand.description || BRAND.description)} نفتخر بتقديم تجربة استثنائية لكل زبائننا مع
               ضمان السرية التامة والجودة العالية.
             </motion.p>
 
@@ -178,9 +202,11 @@ export default function Hero() {
                 className="absolute inset-0 rounded-tl-[100px] rounded-br-[100px] overflow-hidden shadow-2xl"
               >
                 <img
-                  src={assetUrl(heroImage) || PLACEHOLDER_IMAGES.hero}
+                  src={imageUrl(heroImage, 1000) || PLACEHOLDER_IMAGES.hero}
                   alt="SOFT Boutique Collection"
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-burgundy/20 to-transparent" />
               </motion.div>

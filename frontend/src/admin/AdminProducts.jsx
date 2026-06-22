@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { assetUrl } from '../lib/brand'
+import { API, imageUrl } from '../lib/brand'
 import { uploadImage } from '../lib/cloudinaryUpload'
 import AdminNotice from './AdminNotice'
 import {
@@ -48,7 +48,7 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('/api/products?active=all', { headers: headers() })
+      const res = await axios.get(`${API.products}?active=all`, { headers: headers() })
       setProducts(sortProducts(res.data || []))
     } catch {
       setProducts([])
@@ -59,7 +59,7 @@ export default function AdminProducts() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get('/api/categories?active=all')
+      const res = await axios.get(`${API.categories}?active=all`)
       setCategories(res.data || [])
     } catch {
       setCategories([])
@@ -124,13 +124,13 @@ export default function AdminProducts() {
     }
     try {
       if (editing) {
-        await axios.put(`/api/products/${editing}`, form, { headers: headers() })
+        await axios.put(`${API.products}/${editing}`, form, { headers: headers() })
         setNotice({ type: 'success', message: 'تم تحديث المنتج بنجاح.' })
       } else {
         const nextOrder = products.length
           ? Math.max(...products.map((product) => Number(product.order) || 0)) + 1
           : 1
-        await axios.post('/api/products', { ...form, order: nextOrder }, { headers: headers() })
+        await axios.post(API.products, { ...form, order: nextOrder }, { headers: headers() })
         setNotice({ type: 'success', message: 'تم إضافة المنتج وسيظهر في لوحة التحكم والموقع.' })
       }
       resetForm()
@@ -168,7 +168,7 @@ export default function AdminProducts() {
     try {
       await Promise.all(
         nextProducts.map((product) =>
-          axios.put(`/api/products/${product._id}`, { order: product.order }, { headers: headers() })
+          axios.put(`${API.products}/${product._id}`, { order: product.order }, { headers: headers() })
         )
       )
       setNotice({ type: 'success', message: 'تم حفظ ترتيب المنتجات.' })
@@ -181,7 +181,7 @@ export default function AdminProducts() {
   const handleDelete = async (id) => {
     if (!confirm('متأكد من حذف هذا المنتج؟')) return
     try {
-      await axios.delete(`/api/products/${id}`, { headers: headers() })
+      await axios.delete(`${API.products}/${id}`, { headers: headers() })
       setNotice({ type: 'success', message: 'تم حذف المنتج بنجاح.' })
       fetchProducts()
     } catch (err) {
@@ -307,7 +307,7 @@ export default function AdminProducts() {
                     className="hidden"
                   />
                   {form.image && (
-                    <img src={assetUrl(form.image)} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                    <img src={imageUrl(form.image, 120)} alt="" className="w-12 h-12 rounded-lg object-cover" />
                   )}
                 </div>
                 {form.image && (
@@ -396,7 +396,7 @@ export default function AdminProducts() {
             >
               {!search && <GripVertical className="w-5 h-5 text-neutral-300 shrink-0" />}
               <img
-                src={assetUrl(product.image)}
+                src={imageUrl(product.image, 140)}
                 alt=""
                 className="w-16 h-16 rounded-xl object-cover shrink-0"
               />
