@@ -1,5 +1,4 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
 
 const defaultItems = [
@@ -12,35 +11,25 @@ const defaultItems = [
 ]
 
 export default function Marquee({ items = defaultItems }) {
+  const row = [...items, ...items]
+
   return (
     <div className="bg-brand-burgundy text-brand-pink py-4 overflow-hidden border-y border-brand-burgundy-dark">
-      <motion.div
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-        whileHover={{ animationPlayState: 'paused' }}
-        className="flex whitespace-nowrap gap-12"
-        style={{ width: 'fit-content' }}
-      >
-        {[...items, ...items, ...items].map((text, idx) => (
-          <motion.div
-            key={idx}
-            className="flex items-center gap-3 shrink-0"
-            whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-          >
-            <motion.span
-              animate={{ rotate: [0, 180, 360] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            >
-              <Sparkles className="w-4 h-4 text-brand-pink/60" />
-            </motion.span>
-            <span className="font-serif text-lg tracking-wide">{text}</span>
-          </motion.div>
+      <div className="marquee-track flex whitespace-nowrap">
+        {[row, row].map((group, groupIndex) => (
+          <div key={groupIndex} className="flex shrink-0 gap-12 px-6">
+            {group.map((text, idx) => (
+              <div
+                key={`${groupIndex}-${idx}`}
+                className="flex items-center gap-3 shrink-0"
+              >
+                <Sparkles className="w-4 h-4 text-brand-pink/60" />
+                <span className="font-serif text-lg tracking-wide">{text}</span>
+              </div>
+            ))}
+          </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   )
 }
