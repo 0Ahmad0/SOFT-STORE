@@ -50,7 +50,10 @@ export default function Navbar() {
   const goTo = (id) => {
     setOpen(false)
     const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (!el) return
+    const offset = window.innerWidth < 1024 ? 72 : 88
+    const top = el.getBoundingClientRect().top + window.scrollY - offset
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 
   return (
@@ -59,27 +62,28 @@ export default function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'backdrop-blur-xl bg-white/85 border-b border-brand-pink shadow-sm'
-          : 'bg-transparent'
+          ? 'backdrop-blur-xl bg-white/90 border-b border-brand-pink shadow-sm'
+          : 'bg-white/90 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-0'
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 lg:h-20 flex items-center justify-between gap-3">
         <button
+          type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-3 text-start"
+          className="flex items-center gap-2 sm:gap-3 text-start min-w-0"
         >
-          <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-brand-burgundy/20">
+          <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-full overflow-hidden ring-2 ring-brand-burgundy/20 shrink-0">
             <img
               src={imageUrl(brand.logo, 120) || 'https://via.placeholder.com/44/5E1224/ffffff?text=S'}
               alt={brand.name}
               className="w-full h-full object-cover"
             />
           </div>
-          <div>
-            <div className="font-serif text-xl font-bold leading-none text-brand-burgundy">
+          <div className="min-w-0">
+            <div className="font-serif text-lg lg:text-xl font-bold leading-none text-brand-burgundy truncate">
               {brand.name}
             </div>
-            <div className="text-[10px] tracking-[0.2em] text-brand-burgundy/70 mt-1">
+            <div className="text-[9px] lg:text-[10px] tracking-[0.16em] lg:tracking-[0.2em] text-brand-burgundy/70 mt-1 truncate">
               {brand.nameAr}
             </div>
           </div>
@@ -89,6 +93,7 @@ export default function Navbar() {
           {links.map((l) => (
             <li key={l.id}>
               <button
+                type="button"
                 onClick={() => goTo(l.id)}
                 className="text-sm font-medium text-neutral-700 hover:text-brand-burgundy transition-colors"
               >
@@ -110,12 +115,13 @@ export default function Navbar() {
             href={`https://wa.me/${whatsapp}`}
             target="_blank"
             rel="noreferrer"
-            className="bg-brand-burgundy text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-brand-burgundy-dark transition"
+            className="hidden sm:inline-flex bg-brand-burgundy text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-brand-burgundy-dark transition"
           >
             تواصل واتساب
           </a>
           <button
-            className="lg:hidden p-2 text-brand-burgundy"
+            type="button"
+            className="lg:hidden p-2 text-brand-burgundy shrink-0"
             onClick={() => setOpen(!open)}
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -129,14 +135,15 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden bg-white border-t border-brand-pink"
+            className="lg:hidden bg-white border-t border-brand-pink shadow-xl"
           >
-            <ul className="px-6 py-6 flex flex-col gap-4">
+            <ul className="px-4 py-3 flex flex-col">
               {links.map((l) => (
-                <li key={l.id}>
+                <li key={l.id} className="border-b border-brand-pink/60 last:border-b-0">
                   <button
+                    type="button"
                     onClick={() => goTo(l.id)}
-                    className="text-base font-medium text-neutral-800 w-full text-start"
+                    className="text-base font-medium text-neutral-800 w-full text-start py-4"
                   >
                     {l.label}
                   </button>

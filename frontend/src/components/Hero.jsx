@@ -108,9 +108,9 @@ export default function Hero() {
 
             <motion.p
               variants={itemVariants}
-              className="mb-6 inline-flex items-center gap-4 border-y border-brand-pink py-4"
+              className="mb-6 flex w-full max-w-xl items-center gap-3 sm:gap-4 border-y border-brand-pink py-4"
             >
-              <span className="w-16 h-16 rounded-full overflow-hidden bg-brand-pink-soft border-2 border-white shadow-lg shrink-0">
+              <span className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-brand-pink-soft border-2 border-white shadow-lg shrink-0">
                 {brand.managerImage ? (
                   <img
                     src={imageUrl(brand.managerImage, 220)}
